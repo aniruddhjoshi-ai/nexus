@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nexus</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav>
+  <div class="logo" onclick="go('home')"><span>Nexus</span></div>
+  <button class="tab" data-v="home">🏠 Home</button>
+</nav>
+<main>
+
+<section class="view active" id="v-home">
+  <div class="hero">
+    <h1>Meet <span>Nexus</span></h1>
+    <p style="font-size:19px;font-style:italic">Make it easy. Make it Nexus.</p>
+    <button class="btn" style="padding:14px 70px;font-size:17px;border-radius:999px;min-width:240px" onclick="go('chat')">Start chatting</button>
+  </div>
+  <div class="grid">
+    <div class="card" onclick="go('chat')"><div class="ic">💬</div><h3>Normal Chat</h3><p>Talk about anything, just like a friend.</p></div>
+    <div class="card" onclick="go('solve')"><div class="ic">🧠</div><h3>Solve Questions</h3><p>Math, science, homework — step by step.</p></div>
+    <div class="card" onclick="go('code')"><div class="ic">💻</div><h3>Run & Explain Code</h3><p>Run JavaScript in-browser, get explanations for any language.</p></div>
+    <div class="card" onclick="go('translate')"><div class="ic">🌐</div><h3>Translator</h3><p>English to any language, accurately.</p></div>
+    <div class="card" onclick="go('snap')"><div class="ic">📸</div><h3>Snap & Solve</h3><p>Photo of a question or sign? Nexus reads and solves it.</p></div>
+    <div class="card" onclick="go('study')"><div class="ic">📚</div><h3>Study Mode</h3><p>Turn notes into flashcards and a quiz.</p></div>
+    <div class="card" onclick="go('chat')"><div class="ic">🎭</div><h3>Personalities</h3><p>Friend, Teacher, Coach, Examiner or Comedian.</p></div>
+  </div>
+</section>
+
+<section class="view" id="v-chat">
+  <h2>Chat</h2>
+  <select id="persona" style="margin-bottom:8px"></select>
+  <div class="chat" id="chatbox"></div>
+  <div class="row">
+    <button class="mic" data-for="chatin">🎤</button>
+    <textarea id="chatin" rows="1" placeholder="Say or type something..."></textarea>
+    <button class="btn" id="chatsend">Send</button>
+  </div>
+</section>
+
+<section class="view" id="v-solve">
+  <h2>Solve a question</h2>
+  <p class="sub">Maths, physics, logic, general knowledge — with step-by-step working.</p>
+  <label style="margin-top:0">📊 Your level</label>
+  <select class="lvlsel"></select>
+  <input class="lvlin" placeholder="Type your level, e.g. 1st-year engineering" style="display:none;margin-top:8px">
+  <div class="row"><button class="mic" data-for="solvein">🎤</button>
+  <textarea id="solvein" rows="3" placeholder="e.g. Solve 2x² - 5x + 3 = 0"></textarea></div>
+  <div class="row"><button class="btn" id="solvego">Solve</button><button class="btn ghost" id="solvespeak">🔊 Read aloud</button></div>
+  <div class="out" id="solveout">Answer will appear here.</div>
+</section>
+
+<section class="view" id="v-code">
+  <h2>Code</h2>
+  <p class="sub">Run JavaScript right here, or ask the AI to explain / debug code in any language.</p>
+  <div class="row" style="margin-top:0"><button class="mic" data-for="codein">🎤</button>
+  <textarea id="codein" rows="9" spellcheck="false" style="font-family:ui-monospace,monospace;font-size:13px">// Try me
+function fib(n){return n<2?n:fib(n-1)+fib(n-2)}
+for(let i=0;i<10;i++) console.log(fib(i));</textarea></div>
+  <div class="row">
+    <button class="btn" id="runjs">▶ Run (JavaScript)</button>
+    <button class="btn ghost" id="explain">Explain</button>
+    <button class="btn ghost" id="debug">Fix bugs</button>
+  </div>
+  <div class="console" id="console">Output will appear here.</div>
+  <div class="out" id="codeout" style="display:none"></div>
+  <p class="note">Running works for JavaScript. Explain and Fix bugs work for any language.</p>
+  <iframe id="sandbox" sandbox="allow-scripts" style="display:none"></iframe>
+</section>
+
+<section class="view" id="v-translate">
+  <h2>Translate</h2>
+  <p class="sub">English → any language.</p>
+  <select id="lang"></select>
+  <div class="row"><button class="mic" data-for="trin">🎤</button>
+  <textarea id="trin" rows="4" placeholder="Type or speak English..."></textarea></div>
+  <div class="row"><button class="btn" id="trgo">Translate</button><button class="btn ghost" id="trspeak">🔊 Listen</button><button class="btn ghost" id="trcopy">Copy</button></div>
+  <div class="out" id="trout">Translation will appear here.</div>
+  
+</section>
+
+<section class="view" id="v-snap">
+  <h2>Snap &amp; Solve</h2>
+  <p class="sub">Take or choose a photo of a question, notice, menu or sign.</p>
+  <label class="btn filebtn" style="display:inline-block;cursor:pointer">📷 Take / choose photo<input type="file" id="snapfile" accept="image/*"></label>
+  <img id="snapprev" alt="preview">
+  <select id="snapmode" style="margin-top:10px"><option value="solve">Solve it step by step</option><option value="explain">Explain what this is</option><option value="translate">Translate the text in it</option></select>
+  <select id="snaplang" style="margin-top:8px;display:none"></select>
+  <div class="row"><button class="mic" data-for="snapin">🎤</button><textarea id="snapin" rows="2" placeholder="Optional: add details (type or speak)"></textarea></div>
+  <div class="row"><button class="btn" id="snapgo">Go</button></div>
+  <div class="out" id="snapout">Result will appear here.</div>
+</section>
+
+<section class="view" id="v-study">
+  <h2>Study Mode</h2>
+  <p class="sub">Paste or speak your notes (or just a topic). Get flashcards and a quiz.</p>
+  <label style="margin-top:0">📊 Your level</label>
+  <select class="lvlsel"></select>
+  <input class="lvlin" placeholder="Type your level, e.g. 1st-year engineering" style="display:none;margin-top:8px">
+  <div class="row" style="margin-top:0"><button class="mic" data-for="studyin">🎤</button><textarea id="studyin" rows="6" placeholder="Paste notes or a topic..."></textarea></div>
+  <div class="row"><select id="studyn" style="width:auto"><option>5</option><option selected>8</option><option>12</option></select><button class="btn" id="studygo">Make flashcards &amp; quiz</button></div>
+  <div id="studyout"></div>
+</section>
+
+</main>
+<footer>Nexus • Make it easy.</footer>
+
+<script src="app1.js"></script>
+<script src="app2.js"></script>
+</body>
+</html>
