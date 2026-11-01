@@ -84,23 +84,29 @@ const PERSONAS={
  'Comedian':'You are Nexus, a witty comedian. Be funny, but still genuinely helpful and correct.'
 };
 let persona=LS('persona');if(!PERSONAS[persona])persona='Best Friend';
-const sys=()=>PERSONAS[persona]+' Be clear and concise.';
+const sys=()=>PERSONAS[persona]+' Be clear and concise. Write math in plain text only: never use LaTeX, dollar signs or backslashes; use symbols like ×, ÷, ², √ and write fractions like 3/4. Do not use markdown headings (#); use short plain labels like "Step 1:" instead. You may use **bold**.';
 $('#persona').innerHTML=Object.keys(PERSONAS).map(p=>`<option value="${p}">🎭 ${p}</option>`).join('');
 $('#persona').value=persona;
 
-/* ---------- chat ---------- */
+/* ---------- chat (saved in this browser) ---------- */
 const hist=[];
+try{JSON.parse(LS('chat')||'[]').filter(m=>m&&(m.role==='user'||m.role==='assistant')&&typeof m.content==='string').slice(-40).forEach(m=>hist.push({role:m.role,content:m.content}))}catch(e){}
+const saveChat=()=>LS('chat',JSON.stringify(hist.slice(-40)));
 function addMsg(role,text){const d=document.createElement('div');d.className='msg '+role;d.innerHTML=md(text);$('#chatbox').appendChild(d);$('#chatbox').scrollTop=1e9;return d}
-addMsg('ai','Hey! 👋 I\'m Nexus. Ask me anything — type or tap the mic.');
+const greet=()=>addMsg('ai','Hey! 👋 I\'m Nexus. Ask me anything — type or tap the mic.');
+if(hist.length)hist.forEach(m=>addMsg(m.role==='user'?'user':'ai',m.content));else greet();
 async function sendChat(){
   const t=$('#chatin').value.trim();if(!t)return;$('#chatin').value='';
-  addMsg('user',t);hist.push({role:'user',content:t});
+  addMsg('user',t);hist.push({role:'user',content:t});saveChat();
   const w=addMsg('ai','…');
-  try{const a=await ask(sys(),hist.slice(-20));hist.push({role:'assistant',content:a});w.innerHTML=md(a)}
-  catch(e){w.innerHTML=md('⚠️ '+e.message);hist.pop()}
+  try{
+    const h=hist.slice(-20);while(h.length&&h[0].role!=='user')h.shift();
+    const a=await ask(sys(),h);hist.push({role:'assistant',content:a});saveChat();w.innerHTML=md(a)}
+  catch(e){w.innerHTML=md('⚠️ '+e.message);hist.pop();saveChat()}
   $('#chatbox').scrollTop=1e9;
 }
 $('#persona').onchange=()=>{persona=$('#persona').value;LS('persona',persona);addMsg('ai','Switched to '+persona+' mode ✨')};
+$('#newchat').onclick=()=>{if(hist.length&&!confirm('Start a new chat? This clears the current one.'))return;hist.length=0;saveChat();$('#chatbox').innerHTML='';greet()};
 $('#chatsend').onclick=sendChat;
 $('#chatin').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat()}});
 
